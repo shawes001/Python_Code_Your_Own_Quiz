@@ -1,0 +1,285 @@
+# This is my first test of the Quiz
+#all of the import modules I will need
+import time
+import os 
+import random
+
+# https://repl.it/CqFj/146
+# Setting list values
+question_blank = ["___1___","___2___","___3___","___4___","___5___"] # lists the question blanks for the paragraph options.
+
+
+# Defining specific variables and setting index/counts to initial value
+
+level_check_count = 4 #Starting number for the player to choose the correct difficulty
+attempts_check_count = 2
+q=question_blank [:] # for slicing off the answer that was completed correctly without changing q_blank
+answer_index = 0
+
+
+#Defining the paragraphs for each level
+easy_para = "The ___1___ of ___2___ was signed in ___2___ Hall in Philadelphia on July 4, ___3___ as a way for the ___4___ colonies to formally cut ties with Great Britain.  The ___1___ asserted that man was endowed with certain unalienable Rights, including Life, ___5___ and the pursuit of Happiness.  The ___1___ of ___2___ was passed with 12 of the ___3___ colonies voting in favor and one abstaining because they lacked permission to vote for ___2___; although a week later the remaining delegation was granted permission and voted for ___2___ making it unanimous."
+
+med_para = "___1___ ___2___ was pivotal to the formation of the ___3___ as Commander-in-chief of the Continental Army, presiding over the Constitutional Convention and the ___4___ ___5___ of the ___3___.  His time as ___5___ established many of the traditions that are still in use, such as the inaugural address and the simple title of Mr. ___5___ and was a proponent of a strong national government to promote economic growth.  His retirement from the office after 2 terms also established the precedent of the ___5___ only serving 2 terms that lasted until 1940 and is now the 22nd Amendment to the Constitution.  In his farewell address ___2___calls out the dangers of sectionalism and to look beyond slight differences between countrymen in religion, political principles and place independence, liberty and loyalty to the ___3___ above all else. Upon his death he was eulogized as ___4___ in war, ___4___ in peace and ___4___ in the hearts of his countrymen by Henry Lee."
+
+hard_para = "George Lucas’ original Star Wars saga from Episode I to ___1___ could be considered the rise, fall and redemption of ___2___ Skywalker. We followed ___2___ from his discovery on Tatooine in the Phantom Menace that begin his rise to prominence in the ___3___ order to his fall in Episode III, Revenge of the Sith, where he turned to the dark side of the Force and became ___4___  after his defeat by Obi-Wan.  Then the story picked up 20 years later with Episode IV, A New Hope, where we saw ___4___  at the height of his power to the culmination of his story in ___1___, Return of the ___3___, when he killed Emperor Palpatine on the ___5___  to save his son thus redeeming himself by returning to the light side of the Force."
+
+
+#Answer Lists
+easy_answers = ["Declaration","Independence","1776","13","Liberty"]
+med_answers = ["George", "Washington", "United States", "first", "President"]
+hard_answers = ["Episode VI", "Anakin", "Jedi","Darth Vader", "Death Star"] 
+
+#Function Definitions start here
+                                
+def wnp(word,q):
+        for pos in q:
+                if pos in word:
+                        return pos
+                return None
+                                
+
+def game (paragraph_list,guess):
+        replaced = []
+        for word in paragraph_list:
+                replacement = wnp(word,q)
+                if replacement != None:
+                        word = word.replace(replacement,guess)
+                        replaced.append(word)
+                else:
+                        replaced.append(word)
+        replaced = " ".join(replaced)
+        return replaced
+
+
+def check_answer(answer_list,q,attempts,answer_index): #17 lines long
+        # q is the adjusted list of question_blank to make sure that the correct questions are replaced.
+        # attempts is the number of trys before failure.
+        # answer_index is the spot that the correct answer should be in the list of Answers.
+        index = 1
+        while index <= attempts:
+                left = attempts - index
+                guess = raw_input("What is your guess for " + str(q[0]) +"?  ")
+                if guess not in answer_list and left != 0:
+                        print "You have guessed incorrectly.  You have " + str(left) + " attempts left."
+                else:
+                        if guess == answer_list[answer_index]:
+                                #Checks to see if the guess is indeed at the correct space in the answer list
+                                print "You are correct."
+                                return guess
+                        elif index < attempts:
+                                print "Close but no cigar"
+                                print "You have guessed incorrectly.  You have " + str(left) + " attempts left."
+                index = index + 1
+        return False
+
+
+def check_end(paragraph_list,guess):
+        if guess == False:
+                print "You have FAILED"
+                exit()
+        else:
+                print
+                return game(paragraph_list,guess)
+
+
+# I tried to use this Function and I couldn't get it to work properly it just replaced the first blank and never went beyond that but it still asked for the blanks further into the paragraph.  I finally just used a brute force method to run the program outside of the while loop inside the function and it worked fine.
+'''
+def run_game(answer_list,attempts,paragraph_list,q):
+        answer_index = 0
+        while answer_index < len(answer_list):
+                guess = check_answer(answer_list,q,attempts,answer_index)
+                check_end(paragraph_list,guess)
+                paragraph_list = game(paragraph_list,guess).split()
+                answer_index = answer_index + 1
+                q=q[1:]
+                print
+                print 35 *"-"
+                print
+                print " ".join(paragraph_list)
+        return
+
+'''
+
+##################  Program starts here  ##################
+
+
+print (       
+'''Welcome to your opportunity to test your knowledge of various subjects by filling in the blanks.'''
+'''First you will choose a level of difficulty then you will choose the number of attempts for each question.'''
+'''Each option has between 3 and 8 questions to answer.'''
+
+        )
+time.sleep(0.5)
+
+print
+print
+print "Pease choose a level of difficulty level."
+print "A) Easy"
+print "B) Medium"
+print "C) Hard"
+
+level = raw_input().lower()
+#level = "c"
+
+#  Assigning unique varables to generic varables
+if level == "a":
+        print "You have selected the difficulty of Easy."
+        paragraph_level = easy_para
+        paragraph_list = easy_para.split()
+        answer_list = easy_answers
+elif level == "b":
+        print "You have selected the difficulty of Medium."
+        paragraph_level = med_para
+        paragraph_list = med_para.split()
+        answer_list = med_answers
+elif level == "c":
+        print "You have selected the difficulty of Hard."
+        paragraph_level = hard_para
+        paragraph_list = hard_para.split()
+        answer_list = hard_answers
+else:
+        print "You did not select one of the correct options, therefore you will have the Easy option"
+        print "I hope you can follow directions better in the future."
+        level ="a"
+        paragraph_level = easy_para
+        paragraph_list = easy_para.split()
+        answer_list = easy_answers
+
+
+time.sleep(1)
+
+print
+print "Please choose the number of attempts you wish to have per question"
+print "A) 2"
+print "B) 3"
+print "C) 4"
+print "D) 5"
+
+choose_attempts = raw_input().lower()
+#choose_attempts = "b"
+
+if choose_attempts == "a":
+        attempts = 2
+elif choose_attempts == "b":
+        attempts = 3
+elif choose_attempts == "c":
+        attempts = 4
+elif choose_attempts == "d":
+        attempts = 5
+else:
+        print "You did not select one of the valid choices, therefore you will receive a random number of attempts per question."
+        print "I hope you can follow simple directions better in the future."
+        attempts = random.randint(2,5)
+
+
+print
+print "You have selected " + str(attempts) + " attempts per question."
+print
+print "Answers ARE case sensitive!"
+print
+print "Good luck."
+print
+print "Your quiz will begin in 3 seconds.  Prepare yourself."
+
+time.sleep(3)
+
+print
+print
+
+if level == "a":
+        print easy_para
+elif level == "b":
+        print med_para
+else:
+        print hard_para
+
+time.sleep(0.5)
+
+#Brute foce method for running the game.
+print
+print 35 * "-"
+print
+guess = check_answer(answer_list,q,attempts,answer_index)
+check_end(paragraph_list,guess)
+paragraph_list = game(paragraph_list,guess).split()
+answer_index = answer_index + 1
+q=q[1:]
+print
+print 35 * "-"
+print
+print " ".join(paragraph_list)
+print
+print
+time.sleep(0.5)
+print 35 * "-"
+print
+guess = check_answer(answer_list,q,attempts,answer_index)
+check_end(paragraph_list,guess)
+paragraph_list = game(paragraph_list,guess).split()
+answer_index = answer_index + 1
+q=q[1:]
+print
+print 35 * "-"
+print
+print " ".join(paragraph_list)
+print
+print
+time.sleep(0.5)
+print 35 * "-"
+print
+guess = check_answer(answer_list,q,attempts,answer_index)
+check_end(paragraph_list,guess)
+paragraph_list = game(paragraph_list,guess).split()
+answer_index = answer_index + 1
+q=q[1:]
+print
+print 35 * "-"
+print
+print " ".join(paragraph_list)
+print
+print
+time.sleep(0.5)
+print 35 * "-"
+print
+guess = check_answer(answer_list,q,attempts,answer_index)
+check_end(paragraph_list,guess)
+paragraph_list = game(paragraph_list,guess).split()
+answer_index = answer_index + 1
+q=q[1:]
+print
+print 35 * "-"
+print
+print " ".join(paragraph_list)
+print
+print
+time.sleep(0.5)
+print 35 * "-"
+print
+guess = check_answer(answer_list,q,attempts,answer_index)
+check_end(paragraph_list,guess)
+paragraph_list = game(paragraph_list,guess).split()
+answer_index = answer_index + 1
+q=q[1:]
+print
+print 35 * "-"
+print
+print " ".join(paragraph_list)
+print
+time.sleep(0.5)
+print 35 * "-"
+print
+print "Congratulations!"
+print
+if level == "a":
+        print "You have successfully completed the Easy Level."
+elif level == "b":
+        print "You have successfully completed the Medium Level."
+else:
+        print "You have susccessfully completed the Hard Level."
+
+
+
+
+
+
